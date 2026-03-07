@@ -9,19 +9,23 @@
     <main>
         <section class="image">
             <div class="image-frame">
-                <img id="uploaded-file" height="1000">
+                <div id="uploaded-media" height="1000"></div>
+                <img id="macbook-frame" class="device-frame" src="./img/macbook.png" height="1000">
             </div>
         </section>
 
         <section class="nav">
             <ul>
                 <li>
-                    <input type="file" id="file-input" accept="image/*" onclick="onFileSelected(event)">
+                    <input type="file" id="file-input" accept="image/*,video/*" onchange="onFileSelected(event)">
                 </li>
                 <li><input type="text" id="width" placeholder="1080"></li>
                 <li><input type="text" id="height" placeholder="1350"></li>
                 <li>
                     <button id="btn-download">Download</button>
+                </li>
+                <li>
+                    <p>⚠️ MP4 download only works with supported browsers (tested successfully with Chrome and Safari)</p>
                 </li>
             </ul>
         </section>
