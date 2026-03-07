@@ -1,4 +1,6 @@
 # Macify (in development)
+## About
+Macify is a web tool for creating image and video mockups of your screen recordings within Macbook frames. More devices to follow.
 ## How to Use
 Instructions tba
 ## Features (work in progress)
