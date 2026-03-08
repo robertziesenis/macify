@@ -15,3 +15,5 @@ Instructions tba
 ## Info
 Robert Ziesenis
 [robertziesenis.xyz](https://robertziesenis.xyz)
+### Feedback / Bugs / Feature requests
+Please contact [hey@robertziesenis.xyz](mailto:hey@robertziesenis.xyz)
