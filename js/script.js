@@ -86,3 +86,31 @@ function onFileSelected(event) {
 document.getElementById('bg-color').addEventListener('input', function() {
     $('html').css('--background-color', this.value);
 });
+
+// Add event listener to has-shadow checkbox to update --shadow-size CSS variable
+document.getElementById('has-shadow').addEventListener('change', function() {
+    if (this.checked) {
+        $('html').css('--shadow-size', '30px');
+        $('html').css('--shadow-color', 'rgba(255, 255, 255, 0.4)');
+    } else {
+        $('html').css('--shadow-size', '0px');
+        $('html').css('--shadow-color', 'rgba(0, 0, 0, 0)');
+    }
+});
+
+// Add event listener to shadow-size input to update --shadow-size CSS variable
+document.getElementById('shadow-size').addEventListener('input', function() {
+    if (document.getElementById('has-shadow').checked) {
+        $('html').css('--shadow-size', this.value + 'px');
+    }
+});
+
+// Add event listener to has-frame checkbox to show/hide device frame
+document.getElementById('has-frame').addEventListener('change', function() {
+    const deviceFrame = document.querySelector('.device-frame');
+    if (this.checked) {
+        deviceFrame.style.display = 'block';
+    } else {
+        deviceFrame.style.display = 'none';
+    }
+});

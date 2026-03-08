@@ -1,9 +1,17 @@
+function setRecordingVisible(isVisible) {
+  const recording = document.getElementById('recording');
+  if (recording) {
+    recording.style.display = isVisible ? 'block' : 'none';
+  }
+}
+
 // Function to download video with frame overlay
 async function downloadVideoWithFrame() {
   try {
     const video = document.querySelector('#uploaded-media video');
     if (!video) {
       console.error('No video element found');
+      setRecordingVisible(false);
       return;
     }
 
@@ -26,6 +34,12 @@ async function downloadVideoWithFrame() {
     // Get background color
     const frame = document.querySelector('.image-frame');
     const bgColor = getComputedStyle(frame).backgroundColor;
+
+    // Draw shadow
+    const shadowSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--shadow-size'));
+    const shadowColor = getComputedStyle(document.documentElement).getPropertyValue('--shadow-color');
+    ctx.shadowColor = shadowColor;
+    ctx.shadowBlur = shadowSize * 2;
 
     // Get current frame size for scaling
     const frameElement = document.querySelector('.image-frame');
@@ -53,8 +67,15 @@ async function downloadVideoWithFrame() {
     const recorder = new MediaRecorder(stream, { mimeType: mimeType });
     const chunks = [];
 
+    let hasStopped = false;
+
     recorder.ondataavailable = (e) => chunks.push(e.data);
     recorder.onstop = () => {
+      if (hasStopped) {
+        return;
+      }
+      hasStopped = true;
+
       const blob = new Blob(chunks, { type: mimeType });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -62,6 +83,7 @@ async function downloadVideoWithFrame() {
       link.href = url;
       link.click();
       URL.revokeObjectURL(url);
+      setRecordingVisible(false);
     };
 
     // Reset video to start
@@ -89,7 +111,9 @@ async function downloadVideoWithFrame() {
       if (video.currentTime < video.duration) {
         requestAnimationFrame(draw);
       } else {
-        recorder.stop();
+        if (recorder.state !== 'inactive') {
+          recorder.stop();
+        }
         video.pause();
       }
     }
@@ -98,11 +122,14 @@ async function downloadVideoWithFrame() {
 
     // Stop recording after video duration
     setTimeout(() => {
-      recorder.stop();
+      if (recorder.state !== 'inactive') {
+        recorder.stop();
+      }
       video.pause();
     }, video.duration * 1000);
   } catch (error) {
     console.error('Error in downloadVideoWithFrame:', error);
+    setRecordingVisible(false);
   }
 }
 
@@ -121,6 +148,12 @@ function downloadImageWithFrame() {
             const bgColor = getComputedStyle(frame).backgroundColor;
             ctx.fillStyle = bgColor;
             ctx.fillRect(0, 0, width, height);
+
+            // Draw shadow
+            const shadowSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--shadow-size'));
+            const shadowColor = getComputedStyle(document.documentElement).getPropertyValue('--shadow-color');
+            ctx.shadowColor = shadowColor;
+            ctx.shadowBlur = shadowSize * 2;
 
             // Get scale factors
             const frameRect = frame.getBoundingClientRect();
@@ -171,8 +204,10 @@ function downloadImageWithFrame() {
 $(document).ready(function() {
     $('#btn-download').click(function() {
         if (uploadedFileType.startsWith('video/')) {
+      setRecordingVisible(true);
             downloadVideoWithFrame();
         } else {
+      setRecordingVisible(false);
             downloadImageWithFrame();
         }
     });

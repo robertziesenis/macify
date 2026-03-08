@@ -1,5 +1,7 @@
 :root {
     --background-color: #000000;
+    --shadow-size: 30px;
+    --shadow-color: rgba(255, 255, 255, 0.4);
     --lightgray: #f0f0f0;
 }
 
@@ -30,7 +32,7 @@ main {
 /* Control Menu */
 section.nav {
     height: 100%;
-    padding: 10px;
+    padding: 20px;
     background-color: var(--lightgray);
     z-index: 3;
     width: 20%;
@@ -81,4 +83,13 @@ when the aspect ratio of the frame is greater than 1 (landscape) */
     width: 100%;
     height: auto;
     z-index: 2;
+    filter: drop-shadow(0 0 var(--shadow-size) var(--shadow-color));
+}
+
+#uploaded-media {
+    box-shadow: 0 0 var(--shadow-size) var(--shadow-color);
+}
+
+#recording {
+    display: none;
 }

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -25,9 +26,20 @@
                     <input type="color" id="bg-color" name="bg-color" value="#000000">
                 </li>
                 <li>
-                    <button id="btn-download">Download</button>
+                    <label for="has-shadow">Shadow:</label>
+                    <input type="checkbox" id="has-shadow" name="has-shadow" checked>
                 </li>
                 <li>
+                    <label for="shadow-size">Shadow Size:</label>
+                    <input type="range" id="shadow-size" name="shadow-size" value="30" min="0" max="100">
+                </li>
+                <li>
+                    <label for="has-frame">Show device frame:</label>
+                    <input type="checkbox" id="has-frame" name="has-frame" checked>
+                </li>
+                <li>
+                    <button id="btn-download">Download</button>
+                    <p id="recording">Recording Video</p>
                     <p>⚠️ MP4 download only works with supported browsers (tested successfully with Chrome and Safari)</p>
                 </li>
             </ul>
