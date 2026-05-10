@@ -1,60 +1,92 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/style.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./css/style.css" />
     <title>Macify</title>
-</head>
-<body>
+  </head>
+  <body>
     <main>
-        <section class="nav">
-            <ul>
-                <li>
-                    <input type="file" id="file-input" accept="image/*,video/*" onchange="onFileSelected(event)">
-                </li>
-                <li>
-                    <label for="width">Width:</label>
-                    <input type="number" id="width" name="width" value="1080" min="1" max="4000">
-                </li>
-                <li>
-                    <label for="height">Height:</label>
-                    <input type="number" id="height" name="height" value="1350" min="1" max="4000">
-                </li>
-                <li>
-                    <label for="bg-color">Background Color:</label>
-                    <input type="color" id="bg-color" name="bg-color" value="#000000">
-                </li>
-                <li>
-                    <label for="has-shadow">Shadow:</label>
-                    <input type="checkbox" id="has-shadow" name="has-shadow" checked>
-                </li>
-                <li>
-                    <label for="shadow-size">Shadow Size:</label>
-                    <input type="range" id="shadow-size" name="shadow-size" value="30" min="0" max="100">
-                </li>
-                <li>
-                    <label for="has-frame">Show device frame:</label>
-                    <input type="checkbox" id="has-frame" name="has-frame" checked>
-                </li>
-                <li>
-                    <button id="btn-download">Download</button>
-                    <p id="recording">Recording Video</p>
-                    <p>⚠️ MP4 download only works with supported browsers (tested successfully with Chrome and Safari)</p>
-                </li>
-            </ul>
-        </section>
+      <section class="nav">
+        <ul>
+          <li>
+            <input
+              type="file"
+              id="file-input"
+              accept="image/*,video/*"
+              onchange="onFileSelected(event)"
+            />
+          </li>
+          <li>
+            <label for="width">Width:</label>
+            <input
+              type="number"
+              id="width"
+              name="width"
+              value="1080"
+              min="1"
+              max="4000"
+            />
+          </li>
+          <li>
+            <label for="height">Height:</label>
+            <input
+              type="number"
+              id="height"
+              name="height"
+              value="1350"
+              min="1"
+              max="4000"
+            />
+          </li>
+          <li>
+            <label for="bg-color">Background Color:</label>
+            <input type="color" id="bg-color" name="bg-color" value="#000000" />
+          </li>
+          <li>
+            <label for="has-shadow">Shadow:</label>
+            <input type="checkbox" id="has-shadow" name="has-shadow" checked />
+          </li>
+          <li>
+            <label for="shadow-size">Shadow Size:</label>
+            <input
+              type="range"
+              id="shadow-size"
+              name="shadow-size"
+              value="30"
+              min="0"
+              max="100"
+            />
+          </li>
+          <li>
+            <label for="has-frame">Show device frame:</label>
+            <input type="checkbox" id="has-frame" name="has-frame" checked />
+          </li>
+          <li>
+            <button id="btn-download">Download</button>
+            <p id="recording">Recording Video</p>
+            <p>
+              ⚠️ MP4 download only works with supported browsers (tested
+              successfully with Chrome and Safari)
+            </p>
+          </li>
+        </ul>
+      </section>
 
-        <section class="image">
-            <div class="image-frame">
-                <div id="uploaded-media" height="1000"></div>
-                <img id="macbook-frame" class="device-frame" src="./img/macbook.png" height="1000">
-            </div>
-        </section>
+      <section class="image">
+        <canvas id="image-frame" width="1080" height="1350">
+          Sorry, this tool doesn't work with your current browser.
+        </canvas>
+      </section>
     </main>
 
-    <script src="./js/jquery-4.0.0.min.js" type="text/javascript" defer></script>
+    <script
+      src="./js/jquery-4.0.0.min.js"
+      type="text/javascript"
+      defer
+    ></script>
     <script src="./js/script.js" type="text/javascript" defer></script>
-    <script src="./js/render.js" type="text/javascript" defer></script>
-</body>
+    <script src="./js/canvas.js" type="text/javascript" defer></script>
+  </body>
 </html>
