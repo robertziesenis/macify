@@ -1,6 +1,8 @@
 :root {
   --lightgray: #f0f0f0;
-  --darkgray: #d0d0d0;
+  --darkgray: #b8b8b8;
+  --text-color: rgb(77, 77, 77);
+  --red: #ff0000;
 }
 
 /* Reset CSS */
@@ -42,18 +44,38 @@ section.nav {
   padding: 20px;
   z-index: 3;
   width: 20%;
+  color: var(--text-color);
 }
 
 .nav ul {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0px;
 }
 
-.nav ul > li:not(:last-of-type) {
+.nav ul > li {
+  padding: 10px;
+  background-color: var(--darkgray);
+  border-radius: 16px;
+}
+
+button,
+input {
+  cursor: pointer;
+  border: none;
+  background: var(--lightgray);
+  border-radius: 6px;
+  padding: 10px;
+}
+
+#btn-download:active {
+  animation: fade-to-red 1s ease-in-out alternate;
+}
+
+/* .nav ul > li:not(:last-of-type) {
   border-bottom: 1px solid var(--darkgray);
   padding-bottom: 10px;
-}
+} */
 
 /* Image Section */
 section.image {
@@ -64,4 +86,11 @@ section.image {
   pointer-events: none;
   width: 80%;
   padding: 20px;
+}
+
+/*KEYFRAMES*/
+@keyframes fade-to-red {
+  to {
+    background-color: var(--red);
+  }
 }

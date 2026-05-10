@@ -96,7 +96,7 @@ function drawUploadedMedia() {
   const shadow = getShadowSettings();
   ctx.save();
   if (shadow.enabled && shadow.size > 0) {
-    ctx.shadowColor = "rgba(0, 0, 0, 0.4)";
+    ctx.shadowColor = "rgba(0, 0, 0, 1)";
     ctx.shadowBlur = shadow.size;
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = shadow.size * 0.4;
