@@ -8,9 +8,10 @@ Instructions tba
 - [x] Download composition as image file (JPG) or video file (MP4 or WEBM depending on browser support) based on uploaded file type
 - [x] Resize composition width and height
 - [x] Set background color
-- [ ] Enable / disable box-shadow or glow
+- [x] Enable / disable box-shadow or glow
 - [ ] Support for .mov file upload
 - [ ] Change device type between Macbook, iPhone and iMac
+- [ ] Implementing controls design
 
 ## Info
 Robert Ziesenis
