@@ -1,5 +1,6 @@
 :root {
   --lightgray: #f0f0f0;
+  --mediumgray: #dbdbdb;
   --darkgray: #b8b8b8;
   --text-color: rgb(77, 77, 77);
   --red: #ff0000;
@@ -26,6 +27,11 @@ main {
 * {
   font-family: Arial, sans-serif;
   font-size: 16px;
+}
+
+a {
+  color: var(--text-color);
+  text-decoration: underline;
 }
 
 /* Main Content */
@@ -60,12 +66,26 @@ section.nav {
 }
 
 button,
-input {
+input,
+label[for="file-input"] {
+  display: inline-block;
+  color: var(--text-color);
   cursor: pointer;
   border: none;
-  background: var(--lightgray);
+  background: var(--mediumgray);
   border-radius: 6px;
   padding: 10px;
+}
+
+label[for="file-input"],
+#btn-download {
+  width: 100%;
+  text-align: center;
+}
+
+/* Hide the file input element, .custom-file-input for replacement */
+input[type="file"] {
+  display: none;
 }
 
 #btn-download:active {
