@@ -82,7 +82,7 @@ function drawUploadedMedia() {
 
   if (!mediaWidth || !mediaHeight) return;
 
-  const screenWidth = drawWidth * 0.78;
+  const screenWidth = drawWidth * 0.767;
   const screenHeight = screenWidth / (15.4 / 10);
   const mediaX = offsetX + (drawWidth - screenWidth) / 2;
   const mediaY = offsetY + (drawHeight - screenHeight) / 2;
