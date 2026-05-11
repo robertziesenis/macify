@@ -195,6 +195,19 @@ input[type="file"] {
   animation: fade-to-red 1s ease-in-out alternate;
 }
 
+/* Details and Summary */
+details > summary {
+  cursor: pointer;
+}
+
+details[open] summary::before {
+  content: "⏷ ";
+}
+
+details > summary::before {
+  content: "⏵ ";
+}
+
 /* .nav ul > li:not(:last-of-type) {
   border-bottom: 1px solid var(--darkgray);
   padding-bottom: 10px;
