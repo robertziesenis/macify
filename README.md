@@ -9,10 +9,10 @@ Instructions tba
 - [x] Resize composition width and height
 - [x] Set background color
 - [x] Enable / disable box-shadow or glow
-- [ ] Option to change box-shadow color
+- [x] Option to change box-shadow color
 - [ ] Support for .mov file upload
 - [ ] Change device type between Macbook, iPhone and iMac
-- [ ] Implementing controls design
+- [x] Implementing controls design
 
 ## Info
 Robert Ziesenis
