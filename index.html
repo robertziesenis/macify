@@ -9,69 +9,140 @@
   <body>
     <main>
       <section class="nav">
-        <ul>
-          <li>
-            <input
-              type="file"
-              id="file-input"
-              accept="image/*,video/*"
-              onchange="onFileSelected(event)"
-            />
-          </li>
-          <li>
-            <label for="width">Width:</label>
-            <input
-              type="number"
-              id="width"
-              name="width"
-              value="1080"
-              min="1"
-              max="4000"
-            />
-          </li>
-          <li>
-            <label for="height">Height:</label>
-            <input
-              type="number"
-              id="height"
-              name="height"
-              value="1350"
-              min="1"
-              max="4000"
-            />
-          </li>
-          <li>
-            <label for="bg-color">Background Color:</label>
-            <input type="color" id="bg-color" name="bg-color" value="#000000" />
-          </li>
-          <li>
-            <label for="has-shadow">Shadow:</label>
-            <input type="checkbox" id="has-shadow" name="has-shadow" checked />
-          </li>
-          <li>
-            <label for="shadow-size">Shadow Size:</label>
-            <input
-              type="range"
-              id="shadow-size"
-              name="shadow-size"
-              value="30"
-              min="0"
-              max="100"
-            />
-          </li>
-          <li>
-            <label for="has-frame">Show device frame:</label>
-            <input type="checkbox" id="has-frame" name="has-frame" checked />
-          </li>
-          <li>
-            <button id="btn-download">Download</button>
-            <p id="recording">Recording Video</p>
-            <p>
-              ⚠️ MP4 download only works with supported browsers (tested
-              successfully with Chrome and Safari)
-            </p>
-          </li>
-        </ul>
+        <nav>
+          <ul>
+            <li class="li-file-input">
+              <button onclick="document.getElementById('file-input').click()">
+                ↑ Upload image or video file
+              </button>
+              <input
+                type="file"
+                id="file-input"
+                accept="image/*,video/*"
+                onchange="onFileSelected(event)"
+                tabindex="-1"
+              />
+            </li>
+            <li>
+              <label for="width">Width:</label>
+              <input
+                type="number"
+                id="width"
+                name="width"
+                value="1080"
+                min="1"
+                max="4000"
+              />
+            </li>
+            <li>
+              <label for="height">Height:</label>
+              <input
+                type="number"
+                id="height"
+                name="height"
+                value="1350"
+                min="1"
+                max="4000"
+              />
+            </li>
+            <li>
+              <label for="bg-color">Background Color:</label>
+              <input
+                type="color"
+                id="bg-color"
+                name="bg-color"
+                value="#000000"
+              />
+            </li>
+            <li>
+              <label for="has-shadow">Shadow:</label>
+              <input
+                type="checkbox"
+                id="has-shadow"
+                name="has-shadow"
+                checked
+              />
+            </li>
+            <li>
+              <label for="shadow-color">Shadow Color:</label>
+              <input
+                type="color"
+                id="shadow-color"
+                name="shadow-color"
+                value="#000000"
+              />
+            </li>
+            <li>
+              <label for="shadow-size">Shadow Size:</label>
+              <input
+                type="range"
+                id="shadow-size"
+                name="shadow-size"
+                value="30"
+                min="0"
+                max="200"
+              />
+            </li>
+            <li>
+              <label for="has-frame">Show device frame:</label>
+              <input type="checkbox" id="has-frame" name="has-frame" checked />
+            </li>
+            <li>
+              <button id="btn-download">↓ Download</button>
+            </li>
+            <li>
+              <p>
+                → MP4 download only works with supported browsers (tested
+                successfully with Chrome and Safari)
+              </p>
+            </li>
+            <li>
+              <details>
+                <summary>Contact + Info</summary>
+                <p>
+                  I'm happy to hear about your feedback and feature requests!
+                  Contact me at
+                  <a href="mailto:hey@robertziesenis.xyz"
+                    >hey@robertziesenis.xyz</a
+                  ><br /><br />
+                </p>
+                <p>
+                  Typeface:<br />
+                  Golzheim by
+                  <a
+                    href="https://nicetotype.jp/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >nice to type</a
+                  >
+                </p>
+              </details>
+            </li>
+            <li>
+              <details>
+                <summary>Source Code</summary>
+                <p>
+                  Source code available on
+                  <a
+                    href="https://github.com/robertziesenis/macify"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    GitHub</a
+                  >.<br />
+                  Created by Robert Ziesenis, 2026.<br />
+                  Licensed under
+                  <a
+                    href="../LICENSE.md"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    >GNU GPLv3</a
+                  >.
+                </p>
+              </details>
+            </li>
+          </ul>
+        </nav>
       </section>
 
       <section class="image">
