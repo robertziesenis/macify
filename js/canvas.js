@@ -96,7 +96,8 @@ function drawUploadedMedia() {
   const shadow = getShadowSettings();
   ctx.save();
   if (shadow.enabled && shadow.size > 0) {
-    ctx.shadowColor = "rgba(0, 0, 0, 1)";
+    ctx.shadowColor =
+      document.getElementById("shadow-color")?.value || "rgba(0, 0, 0, 1)";
     ctx.shadowBlur = shadow.size;
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = shadow.size * 0.4;
@@ -191,6 +192,7 @@ deviceFrame.onload = redraw;
 
 document.getElementById("has-shadow").addEventListener("change", redraw);
 document.getElementById("shadow-size").addEventListener("input", redraw);
+document.getElementById("shadow-color").addEventListener("input", redraw);
 document.getElementById("has-frame").addEventListener("change", redraw);
 
 // Download functionality
@@ -213,6 +215,11 @@ async function downloadVideo() {
   try {
     if (!uploadedMedia || uploadedMediaType !== "video") return;
     setRecordingVisible(true);
+
+    // Add class to button for visual feedback during recording and change button text to indicate recording state
+    const downloadButton = document.getElementById("btn-download");
+    downloadButton.classList.add("recording");
+    downloadButton.textContent = "Recording...";
 
     let mimeType = "video/webm";
     if (MediaRecorder.isTypeSupported("video/mp4;codecs=h264")) {
@@ -244,6 +251,8 @@ async function downloadVideo() {
       link.click();
       URL.revokeObjectURL(url);
       setRecordingVisible(false);
+      downloadButton.classList.remove("recording");
+      downloadButton.textContent = "↓ Download";
     };
 
     // Reset video to start

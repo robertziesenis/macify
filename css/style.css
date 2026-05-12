@@ -16,7 +16,7 @@
   --mediumdarkgray: #d5d4d4;
   --darkgray: #c4c4c4;
   --text-color: rgb(105, 105, 105);
-  --red: #ff0000;
+  --red: #ff3d3d;
   --font-family: "Golzheim-VAR", sans-serif;
   --font-size-normal: 16px;
   --padding-normal: 10px;
@@ -103,11 +103,14 @@ label[for="file-input"] {
   height: calc(var(--font-size-normal) + (var(--padding-normal) * 2));
 }
 
-button:hover, input:hover, label[for="file-input"]:hover {
+button:hover,
+input:hover,
+label[for="file-input"]:hover {
   background-color: var(--mediumdarkgray);
 }
 
-input[type="number"], input[type="color"] {
+input[type="number"],
+input[type="color"] {
   width: 50%;
 }
 
@@ -115,7 +118,8 @@ input[type="color"] {
   padding: 0;
 }
 
-input[type="color"]::-webkit-color-swatch-wrapper, input[type="color"]::-webkit-color-swatch {
+input[type="color"]::-webkit-color-swatch-wrapper,
+input[type="color"]::-webkit-color-swatch {
   padding: 0;
   border-radius: var(--border-radius-normal);
   border: none;
@@ -126,8 +130,6 @@ input[type="color"]::-moz-color-swatch {
   border-radius: var(--border-radius-normal);
   border: none;
 }
-
-
 
 /* Custom Range Input */
 input[type="range"] {
@@ -145,6 +147,7 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: pointer;
   border-radius: 50%;
   border: none;
+  box-shadow: none;
 }
 
 input[type="range"]::-moz-range-thumb {
@@ -156,9 +159,8 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
   border-radius: 50%;
   border: none;
+  box-shadow: none;
 }
-
-
 
 /* Custom Checkbox Input */
 input[type="checkbox"] {
@@ -180,10 +182,11 @@ input[type="checkbox"]:checked::after {
   transform: translate(-50%, -50%);
 }
 
-label[for="file-input"],
-#btn-download {
+nav button {
   width: 100%;
-  text-align: center;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* Hide the file input element, .custom-file-input for replacement */
@@ -191,8 +194,8 @@ input[type="file"] {
   display: none;
 }
 
-#btn-download:active {
-  animation: fade-to-red 1s ease-in-out alternate;
+.recording {
+  animation: fade-to-red 3s ease-in-out infinite;
 }
 
 /* Details and Summary */
@@ -226,7 +229,16 @@ section.image {
 
 /*KEYFRAMES*/
 @keyframes fade-to-red {
-  to {
+  0% {
+    background-color: var(--mediumgray);
+    color: var(--text-color);
+  }
+  50% {
     background-color: var(--red);
+    color: var(--lightgray);
+  }
+  100% {
+    background-color: var(--mediumgray);
+    color: var(--text-color);
   }
 }
