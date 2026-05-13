@@ -1,12 +1,7 @@
 /*Import Fonts*/
 @font-face {
-  font-family: "OCRAEXT";
-  src: url("../fonts/OCRAEXT.ttf") format("truetype");
-}
-
-@font-face {
-  font-family: "Golzheim-VAR";
-  src: url("../fonts/GolzheimSansVAR.ttf") format("truetype");
+  font-family: "Golzheim-Sans-Regular";
+  src: url("../fonts/GolzheimSans-Regular.woff2") format("woff2");
 }
 
 /* Variables */
@@ -17,7 +12,7 @@
   --darkgray: #c4c4c4;
   --text-color: rgb(105, 105, 105);
   --red: #ff3d3d;
-  --font-family: "Golzheim-VAR", sans-serif;
+  --font-family: "Golzheim-Sans-Regular", sans-serif;
   --font-size-normal: 16px;
   --padding-normal: 10px;
   --border-radius-normal: 6px;
@@ -90,8 +85,10 @@ section.nav {
   align-items: center;
 }
 
+/* Custom Inputs + Buttons */
 button,
 input,
+select,
 label[for="file-input"] {
   display: inline-block;
   color: var(--text-color);
@@ -105,7 +102,8 @@ label[for="file-input"] {
 
 button:hover,
 input:hover,
-label[for="file-input"]:hover {
+label[for="file-input"]:hover,
+select:hover {
   background-color: var(--mediumdarkgray);
 }
 
@@ -131,10 +129,65 @@ input[type="color"]::-moz-color-swatch {
   border: none;
 }
 
-/* Custom Range Input */
+/* Custom Number Input */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  background: transparent;
+  color: var(--text-color);
+}
+
+/* Custom Range Input*/
 input[type="range"] {
   appearance: none;
   -webkit-appearance: none;
+}
+
+nav input[type="range"] {
+  width: 50%;
+}
+
+/* Custom Select */
+select {
+  appearance: base-select;
+  overflow: hidden;
+  text-wrap: nowrap;
+}
+
+select::picker-icon {
+  content: "⏷";
+}
+
+select:open::picker-icon {
+  content: "⏶";
+}
+
+::picker(select) {
+  appearance: base-select;
+  overflow: hidden;
+  text-wrap: nowrap;
+  background-color: var(--mediumgray);
+  border-radius: var(--border-radius-normal);
+  border: 1px solid var(--text-color);
+  width: anchor-size(width);
+  min-width: anchor-size(width);
+}
+
+select option {
+  padding: var(--padding-normal);
+  color: var(--text-color);
+}
+
+select option:hover,
+select option:checked {
+  background-color: var(--mediumdarkgray);
+}
+
+select option::checkmark {
+  content: "✗";
+  color: var(--text-color);
+}
+
+nav select {
   width: 50%;
 }
 
@@ -182,11 +235,15 @@ input[type="checkbox"]:checked::after {
   transform: translate(-50%, -50%);
 }
 
-nav button {
-  width: 100%;
+nav button,
+nav select {
   display: inline-flex;
   justify-content: center;
   align-items: center;
+}
+
+nav button {
+  width: 100%;
 }
 
 /* Hide the file input element, .custom-file-input for replacement */
