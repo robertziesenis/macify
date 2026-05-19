@@ -4,8 +4,62 @@ const ctx = canvas.getContext("2d");
 let canvasWidth = 1080;
 let canvasHeight = 1350;
 let bgColor = "#000000";
-// Ratio of bottom padding to image height to ensure the device frame fits nicely within the canvas
-const bottomPaddingRatio = 0.12;
+// Per-device frame assets, canvas layout, and screen placement.
+// layout padding/shift values are fractions of canvas width (horizontal) or height (vertical).
+const DEVICES = {
+  macbook: {
+    frameSrc: "./img/macbook.png",
+    placeholderSrc: "./img/placeholder-screen-macbook.png",
+    layout: {
+      paddingTop: 0.04,
+      paddingBottom: 0.12,
+      paddingLeft: 0.05,
+      paddingRight: 0.05,
+      shiftX: 0,
+      shiftY: 0,
+    },
+    screen: {
+      widthScale: 0.766,
+      aspectRatio: 1.539,
+      offsetXScale: 0.117,
+      offsetYScale: 0.117,
+    },
+  },
+  imac: {
+    frameSrc: "./img/imac.png",
+    layout: {
+      paddingTop: 0.05,
+      paddingBottom: 0.1,
+      paddingLeft: 0.06,
+      paddingRight: 0.06,
+      shiftX: 0,
+      shiftY: 0.015,
+    },
+    screen: {
+      widthScale: 0.941,
+      aspectRatio: 16 / 9,
+      offsetXScale: 0.029,
+      offsetYScale: 0.04,
+    },
+  },
+  iphone: {
+    frameSrc: "./img/iphone.png",
+    layout: {
+      paddingTop: 0.06,
+      paddingBottom: 0.08,
+      paddingLeft: 0.12,
+      paddingRight: 0.12,
+      shiftX: 0,
+      shiftY: -0.02,
+    },
+    screen: {
+      widthScale: 0.868,
+      aspectRatio: 0.461,
+      offsetXScale: 0.066,
+      offsetYScale: 0.033,
+    },
+  },
+};
 
 function getInitialCanvasDimensions() {
   const widthInput = document.getElementById("width");
@@ -36,22 +90,54 @@ function registerDrawFunction(fn) {
   drawFunctions.push(fn);
 }
 
+let currentDeviceId =
+  document.getElementById("select-device")?.value || "macbook";
+
+function getDeviceConfig(deviceId = currentDeviceId) {
+  return DEVICES[deviceId] || DEVICES.macbook;
+}
+
+function getDeviceLayout() {
+  const layout = getDeviceConfig().layout || {};
+  return {
+    paddingTop: layout.paddingTop ?? 0,
+    paddingBottom: layout.paddingBottom ?? 0,
+    paddingLeft: layout.paddingLeft ?? 0,
+    paddingRight: layout.paddingRight ?? 0,
+    shiftX: layout.shiftX ?? 0,
+    shiftY: layout.shiftY ?? 0,
+  };
+}
+
 function getDeviceFrameBounds() {
-  let drawWidth = canvas.width;
+  const {
+    paddingTop,
+    paddingBottom,
+    paddingLeft,
+    paddingRight,
+    shiftX,
+    shiftY,
+  } = getDeviceLayout();
+
+  const availWidth = canvas.width * (1 - paddingLeft - paddingRight);
+  const availHeight = canvas.height * (1 - paddingTop - paddingBottom);
+  const availX = canvas.width * paddingLeft;
+  const availY = canvas.height * paddingTop;
+
+  let drawWidth = availWidth;
   let drawHeight =
     (deviceFrame.naturalHeight / deviceFrame.naturalWidth) * drawWidth;
-  const maxImageHeight = canvas.height / (1 + bottomPaddingRatio);
 
-  if (drawHeight > maxImageHeight) {
-    drawHeight = maxImageHeight;
+  if (drawHeight > availHeight) {
+    drawHeight = availHeight;
     drawWidth =
       (deviceFrame.naturalWidth / deviceFrame.naturalHeight) * drawHeight;
   }
 
-  const bottomPadding = drawHeight * bottomPaddingRatio;
-  const totalHeight = drawHeight + bottomPadding;
-  const offsetX = (canvas.width - drawWidth) / 2;
-  const offsetY = (canvas.height - totalHeight) / 2;
+  const offsetX =
+    availX + (availWidth - drawWidth) / 2 + canvas.width * shiftX;
+  const offsetY =
+    availY + (availHeight - drawHeight) / 2 + canvas.height * shiftY;
 
   return { offsetX, offsetY, drawWidth, drawHeight };
 }
@@ -66,27 +152,27 @@ function isFrameVisible() {
   return document.getElementById("has-frame")?.checked ?? true;
 }
 
-function drawUploadedMedia() {
-  if (!uploadedMedia || !deviceFrame.complete) return;
-  if (uploadedMediaType === "video" && uploadedMedia.readyState < 2) return;
-
+function getScreenBounds() {
   const { offsetX, offsetY, drawWidth, drawHeight } = getDeviceFrameBounds();
-  const mediaWidth =
-    uploadedMediaType === "image"
-      ? uploadedMedia.naturalWidth
-      : uploadedMedia.videoWidth;
-  const mediaHeight =
-    uploadedMediaType === "image"
-      ? uploadedMedia.naturalHeight
-      : uploadedMedia.videoHeight;
+  const { screen } = getDeviceConfig();
+  const screenWidth = drawWidth * screen.widthScale;
+  const screenHeight = screenWidth / screen.aspectRatio;
+  const mediaX =
+    screen.offsetXScale != null
+      ? offsetX + drawWidth * screen.offsetXScale
+      : offsetX + (drawWidth - screenWidth) / 2;
+  const mediaY =
+    screen.offsetYScale != null
+      ? offsetY + drawHeight * screen.offsetYScale
+      : offsetY + (drawHeight - screenHeight) / 2;
 
+  return { mediaX, mediaY, screenWidth, screenHeight };
+}
+
+function drawImageCoverInScreen(image, mediaWidth, mediaHeight) {
   if (!mediaWidth || !mediaHeight) return;
 
-  const screenWidth = drawWidth * 0.767;
-  const screenHeight = screenWidth / (15.4 / 10);
-  const mediaX = offsetX + (drawWidth - screenWidth) / 2;
-  const mediaY = offsetY + (drawHeight - screenHeight) / 2;
-
+  const { mediaX, mediaY, screenWidth, screenHeight } = getScreenBounds();
   const scale = Math.max(screenWidth / mediaWidth, screenHeight / mediaHeight);
   const sw = screenWidth / scale;
   const sh = screenHeight / scale;
@@ -109,7 +195,7 @@ function drawUploadedMedia() {
   }
 
   ctx.drawImage(
-    uploadedMedia,
+    image,
     sx,
     sy,
     sw,
@@ -120,6 +206,51 @@ function drawUploadedMedia() {
     screenHeight,
   );
   ctx.restore();
+}
+
+function drawScreenContent() {
+  if (!deviceFrame.complete) return;
+
+  if (uploadedMedia) {
+    if (uploadedMediaType === "video" && uploadedMedia.readyState < 2) return;
+
+    const mediaWidth =
+      uploadedMediaType === "image"
+        ? uploadedMedia.naturalWidth
+        : uploadedMedia.videoWidth;
+    const mediaHeight =
+      uploadedMediaType === "image"
+        ? uploadedMedia.naturalHeight
+        : uploadedMedia.videoHeight;
+
+    drawImageCoverInScreen(uploadedMedia, mediaWidth, mediaHeight);
+    return;
+  }
+
+  const { placeholderSrc } = getDeviceConfig();
+  if (!placeholderSrc || !placeholderScreen.complete || !placeholderScreen.src) {
+    return;
+  }
+
+  drawImageCoverInScreen(
+    placeholderScreen,
+    placeholderScreen.naturalWidth,
+    placeholderScreen.naturalHeight,
+  );
+}
+
+function setDevice(deviceId) {
+  if (!DEVICES[deviceId]) return;
+
+  currentDeviceId = deviceId;
+  const config = getDeviceConfig();
+
+  deviceFrame.src = config.frameSrc;
+  if (config.placeholderSrc) {
+    placeholderScreen.src = config.placeholderSrc;
+  } else {
+    placeholderScreen.removeAttribute("src");
+  }
 }
 
 function startVideoLoop() {
@@ -176,11 +307,12 @@ document.getElementById("bg-color").addEventListener("input", function () {
 
 // Uploaded media handling
 
-// Device frame image
+// Device frame and placeholder screen images
 const deviceFrame = new Image();
-deviceFrame.src = "./img/macbook.png";
+const placeholderScreen = new Image();
+setDevice(currentDeviceId);
 
-registerDrawFunction(drawUploadedMedia);
+registerDrawFunction(drawScreenContent);
 registerDrawFunction(() => {
   if (!deviceFrame.complete || !isFrameVisible()) return;
 
@@ -189,11 +321,16 @@ registerDrawFunction(() => {
 });
 
 deviceFrame.onload = redraw;
+placeholderScreen.onload = redraw;
 
 document.getElementById("has-shadow").addEventListener("change", redraw);
 document.getElementById("shadow-size").addEventListener("input", redraw);
 document.getElementById("shadow-color").addEventListener("input", redraw);
 document.getElementById("has-frame").addEventListener("change", redraw);
+document.getElementById("select-device").addEventListener("change", function () {
+  setDevice(this.value);
+  redraw();
+});
 
 // Download functionality
 function setRecordingVisible(isVisible) {
