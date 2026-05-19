@@ -12,7 +12,7 @@
         <nav>
           <ul>
             <li class="li-file-input">
-              <button onclick="document.getElementById('file-input').click()">
+              <button id="button-file-input" onclick="document.getElementById('file-input').click()">
                 ↑ Upload image or video file
               </button>
               <input
@@ -22,6 +22,7 @@
                 onchange="onFileSelected(event)"
                 tabindex="-1"
               />
+              <button id="button-delete-file" type="button">✗</button>
             </li>
             <li>
               <label for="width">Width:</label>

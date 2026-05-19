@@ -12,6 +12,7 @@
   --darkgray: #c4c4c4;
   --text-color: rgb(105, 105, 105);
   --red: #ff3d3d;
+  --green: #9cf59c;
   --font-family: "Golzheim-Sans-Regular", sans-serif;
   --font-size-normal: 16px;
   --padding-normal: 10px;
@@ -67,7 +68,8 @@ section.nav {
   display: flex;
   flex-direction: row;
   justify-content: start;
-  align-items: center;
+  align-items: safe center;
+  overflow-y: scroll;
 }
 
 .nav ul {
@@ -81,6 +83,7 @@ section.nav {
   background-color: var(--darkgray);
   border-radius: calc(var(--border-radius-normal) + var(--padding-normal));
   display: flex;
+  gap: var(--padding-normal);
   justify-content: space-between;
   align-items: center;
 }
@@ -110,6 +113,7 @@ select:hover {
 input[type="number"],
 input[type="color"] {
   width: 50%;
+  flex-shrink: 0;
 }
 
 input[type="color"] {
@@ -129,6 +133,23 @@ input[type="color"]::-moz-color-swatch {
   border: none;
 }
 
+/* Custom File Input */
+/* Hide the file input element, .custom-file-input for replacement */
+input[type="file"] {
+  display: none;
+}
+
+#button-delete-file {
+  color: var(--text-color);
+  padding: var(--padding-normal);
+  width: calc(var(--font-size-normal) + (var(--padding-normal) * 2));
+  height: calc(var(--font-size-normal) + (var(--padding-normal) * 2));
+  flex-shrink: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Custom Number Input */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -144,6 +165,7 @@ input[type="range"] {
 
 nav input[type="range"] {
   width: 50%;
+  flex-shrink: 0;
 }
 
 /* Custom Select */
@@ -189,6 +211,7 @@ select option::checkmark {
 
 nav select {
   width: 50%;
+  flex-shrink: 0;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -246,11 +269,6 @@ nav button {
   width: 100%;
 }
 
-/* Hide the file input element, .custom-file-input for replacement */
-input[type="file"] {
-  display: none;
-}
-
 .recording {
   animation: fade-to-red 3s ease-in-out infinite;
 }
@@ -267,11 +285,6 @@ details[open] summary::before {
 details > summary::before {
   content: "⏵ ";
 }
-
-/* .nav ul > li:not(:last-of-type) {
-  border-bottom: 1px solid var(--darkgray);
-  padding-bottom: 10px;
-} */
 
 /* Image Section */
 section.image {
