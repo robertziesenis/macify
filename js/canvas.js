@@ -4,17 +4,17 @@ const ctx = canvas.getContext("2d");
 let canvasWidth = 1080;
 let canvasHeight = 1350;
 let bgColor = "#000000";
+const PLACEHOLDER_SCREEN_COLOR = "#0000ff";
 // Per-device frame assets, canvas layout, and screen placement.
 // layout padding/shift values are fractions of canvas width (horizontal) or height (vertical).
 const DEVICES = {
   macbook: {
     frameSrc: "./img/macbook.png",
-    placeholderSrc: "./img/placeholder-screen-macbook.png",
     layout: {
       paddingTop: 0.04,
       paddingBottom: 0.12,
-      paddingLeft: 0.05,
-      paddingRight: 0.05,
+      paddingLeft: 0,
+      paddingRight: 0,
       shiftX: 0,
       shiftY: 0,
     },
@@ -45,18 +45,20 @@ const DEVICES = {
   iphone: {
     frameSrc: "./img/iphone.png",
     layout: {
-      paddingTop: 0.06,
-      paddingBottom: 0.08,
-      paddingLeft: 0.12,
-      paddingRight: 0.12,
+      paddingTop: 0.05,
+      paddingBottom: 0.05,
+      paddingLeft: 0.1,
+      paddingRight: 0.1,
       shiftX: 0,
-      shiftY: -0.02,
+      shiftY: 0,
     },
     screen: {
       widthScale: 0.868,
       aspectRatio: 0.461,
       offsetXScale: 0.066,
       offsetYScale: 0.033,
+      // Corner radius as a fraction of the shorter screen edge
+      cornerRadiusScale: 0.12,
     },
   },
 };
@@ -169,6 +171,46 @@ function getScreenBounds() {
   return { mediaX, mediaY, screenWidth, screenHeight };
 }
 
+function getScreenCornerRadius(screenWidth, screenHeight) {
+  const cornerRadiusScale = getDeviceConfig().screen.cornerRadiusScale;
+  if (!cornerRadiusScale) return 0;
+
+  const maxRadius = Math.min(screenWidth, screenHeight) / 2;
+  return Math.min(
+    Math.min(screenWidth, screenHeight) * cornerRadiusScale,
+    maxRadius,
+  );
+}
+
+function addRoundRectPath(ctx, x, y, width, height, radius) {
+  const r = Math.min(radius, width / 2, height / 2);
+  if (typeof ctx.roundRect === "function") {
+    ctx.roundRect(x, y, width, height, r);
+    return;
+  }
+
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + width - r, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+  ctx.lineTo(x + width, y + height - r);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+  ctx.lineTo(x + r, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function clipToScreenBounds() {
+  const { mediaX, mediaY, screenWidth, screenHeight } = getScreenBounds();
+  const radius = getScreenCornerRadius(screenWidth, screenHeight);
+  if (radius <= 0) return;
+
+  ctx.beginPath();
+  addRoundRectPath(ctx, mediaX, mediaY, screenWidth, screenHeight, radius);
+  ctx.clip();
+}
+
 function drawImageCoverInScreen(image, mediaWidth, mediaHeight) {
   if (!mediaWidth || !mediaHeight) return;
 
@@ -179,20 +221,9 @@ function drawImageCoverInScreen(image, mediaWidth, mediaHeight) {
   const sx = Math.max(0, (mediaWidth - sw) / 2);
   const sy = Math.max(0, (mediaHeight - sh) / 2);
 
-  const shadow = getShadowSettings();
   ctx.save();
-  if (shadow.enabled && shadow.size > 0) {
-    ctx.shadowColor =
-      document.getElementById("shadow-color")?.value || "rgba(0, 0, 0, 1)";
-    ctx.shadowBlur = shadow.size;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = shadow.size * 0.4;
-  } else {
-    ctx.shadowColor = "transparent";
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-  }
+  clipToScreenBounds();
+  applyScreenShadow();
 
   ctx.drawImage(
     image,
@@ -205,6 +236,33 @@ function drawImageCoverInScreen(image, mediaWidth, mediaHeight) {
     screenWidth,
     screenHeight,
   );
+  ctx.restore();
+}
+
+function applyScreenShadow() {
+  const shadow = getShadowSettings();
+  if (shadow.enabled && shadow.size > 0) {
+    ctx.shadowColor =
+      document.getElementById("shadow-color")?.value || "rgba(0, 0, 0, 1)";
+    ctx.shadowBlur = shadow.size;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = shadow.size * 0.4;
+  } else {
+    ctx.shadowColor = "transparent";
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+  }
+}
+
+function drawPlaceholderScreen() {
+  const { mediaX, mediaY, screenWidth, screenHeight } = getScreenBounds();
+
+  ctx.save();
+  clipToScreenBounds();
+  applyScreenShadow();
+  ctx.fillStyle = PLACEHOLDER_SCREEN_COLOR;
+  ctx.fillRect(mediaX, mediaY, screenWidth, screenHeight);
   ctx.restore();
 }
 
@@ -227,30 +285,14 @@ function drawScreenContent() {
     return;
   }
 
-  const { placeholderSrc } = getDeviceConfig();
-  if (!placeholderSrc || !placeholderScreen.complete || !placeholderScreen.src) {
-    return;
-  }
-
-  drawImageCoverInScreen(
-    placeholderScreen,
-    placeholderScreen.naturalWidth,
-    placeholderScreen.naturalHeight,
-  );
+  drawPlaceholderScreen();
 }
 
 function setDevice(deviceId) {
   if (!DEVICES[deviceId]) return;
 
   currentDeviceId = deviceId;
-  const config = getDeviceConfig();
-
-  deviceFrame.src = config.frameSrc;
-  if (config.placeholderSrc) {
-    placeholderScreen.src = config.placeholderSrc;
-  } else {
-    placeholderScreen.removeAttribute("src");
-  }
+  deviceFrame.src = getDeviceConfig().frameSrc;
 }
 
 function startVideoLoop() {
@@ -307,9 +349,8 @@ document.getElementById("bg-color").addEventListener("input", function () {
 
 // Uploaded media handling
 
-// Device frame and placeholder screen images
+// Device frame image
 const deviceFrame = new Image();
-const placeholderScreen = new Image();
 setDevice(currentDeviceId);
 
 registerDrawFunction(drawScreenContent);
@@ -321,7 +362,6 @@ registerDrawFunction(() => {
 });
 
 deviceFrame.onload = redraw;
-placeholderScreen.onload = redraw;
 
 document.getElementById("has-shadow").addEventListener("change", redraw);
 document.getElementById("shadow-size").addEventListener("input", redraw);
