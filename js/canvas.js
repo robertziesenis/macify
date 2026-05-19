@@ -172,6 +172,8 @@ function getScreenBounds() {
 }
 
 function getScreenCornerRadius(screenWidth, screenHeight) {
+  if (!isFrameVisible()) return 0;
+
   const cornerRadiusScale = getDeviceConfig().screen.cornerRadiusScale;
   if (!cornerRadiusScale) return 0;
 
