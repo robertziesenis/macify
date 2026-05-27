@@ -11,7 +11,7 @@ Instructions tba
 - [x] Enable / disable box-shadow or glow
 - [x] Option to change box-shadow color
 - [ ] Support for .mov file upload
-- [ ] Change device type between Macbook, iPhone and iMac
+- [x] Change device type between Macbook, iPhone and iMac
 - [x] Implementing controls design
 
 ## Info
