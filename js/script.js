@@ -54,3 +54,12 @@ fileInput.addEventListener("change", () => {
   fileInputButton.textContent = "Change file";
   deleteFileButton.style.display = "flex";
 })
+
+deleteFileButton.addEventListener("click", () => {
+    fileInput.value = "";
+    fileInputButton.textContent = "Upload image or video file";
+    deleteFileButton.style.display = "none";
+
+    clearUploadedMedia();
+    redraw();
+});
