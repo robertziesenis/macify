@@ -38,3 +38,19 @@ $(document).ready(function () {
 
   updateCanvasPreview();
 });
+
+// Change text of file-input when a file is selected and show delete button
+const fileInputButton = document.getElementById("button-file-input");
+const fileInput = document.getElementById("file-input");
+const deleteFileButton = document.getElementById("button-delete-file");
+
+fileInput.addEventListener("change", () => {
+  if (fileInput.value) {
+    fileInput.value = "";
+    fileInputButton.textContent = "Upload image or video file";
+    deleteFileButton.style.display = "none";
+  }
+
+  fileInputButton.textContent = "Change file";
+  deleteFileButton.style.display = "flex";
+})
