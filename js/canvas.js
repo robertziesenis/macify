@@ -21,7 +21,35 @@ function getInitialCanvasDimensions() {
   }
 }
 
-getInitialCanvasDimensions();
+function resetInputsToDefaults() {
+  const widthInput = document.getElementById("width");
+  const heightInput = document.getElementById("height");
+  const bgColorInput = document.getElementById("bg-color");
+  const hasShadowInput = document.getElementById("has-shadow");
+  const shadowColorInput = document.getElementById("shadow-color");
+  const shadowSizeInput = document.getElementById("shadow-size");
+  const hasFrameInput = document.getElementById("has-frame");
+
+  widthInput.value = widthInput.defaultValue;
+  heightInput.value = heightInput.defaultValue;
+  bgColorInput.value = bgColorInput.defaultValue;
+  bgColor = bgColorInput.defaultValue;
+  hasShadowInput.checked = hasShadowInput.defaultChecked;
+  shadowColorInput.value = shadowColorInput.defaultValue;
+  shadowSizeInput.value = shadowSizeInput.defaultValue;
+  hasFrameInput.checked = hasFrameInput.defaultChecked;
+}
+
+// Reset inputs to defaults and read initial dimensions after DOM is ready
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function() {
+    resetInputsToDefaults();
+    getInitialCanvasDimensions();
+  });
+} else {
+  resetInputsToDefaults();
+  getInitialCanvasDimensions();
+}
 
 // Uploaded media state
 let uploadedMedia = null;
