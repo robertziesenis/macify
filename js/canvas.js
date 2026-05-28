@@ -19,10 +19,10 @@ const DEVICES = {
       shiftY: 0,
     },
     screen: {
-      widthScale: 0.766,
+      widthScale: 0.767,
       aspectRatio: 1.539,
-      offsetXScale: 0.117,
-      offsetYScale: 0.117,
+      offsetXScale: 0.1165,
+      offsetYScale: 0.1165,
     },
   },
   imac: {
