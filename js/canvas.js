@@ -61,6 +61,23 @@ const DEVICES = {
       cornerRadiusScale: 0.12,
     },
   },
+  thinkpad: {
+    frameSrc: "./img/thinkpad.png",
+    layout: {
+      paddingTop: 0.05,
+      paddingBottom: 0.04,
+      paddingLeft: 0.06,
+      paddingRight: 0.06,
+      shiftX: 0,
+      shiftY: 0,
+    },
+    screen: {
+      widthScale: 0.912,
+      aspectRatio: 16 / 10,
+      offsetXScale: 0.042,
+      offsetYScale: 0.028,
+    },
+  },
 };
 
 function getInitialCanvasDimensions() {
