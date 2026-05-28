@@ -167,10 +167,6 @@ function getShadowSettings() {
   return { enabled: Boolean(hasShadow), size };
 }
 
-function isFrameVisible() {
-  return document.getElementById("has-frame")?.checked ?? true;
-}
-
 function getScreenBounds() {
   const { offsetX, offsetY, drawWidth, drawHeight } = getDeviceFrameBounds();
   const { screen } = getDeviceConfig();
@@ -189,8 +185,6 @@ function getScreenBounds() {
 }
 
 function getScreenCornerRadius(screenWidth, screenHeight) {
-  if (!isFrameVisible()) return 0;
-
   const cornerRadiusScale = getDeviceConfig().screen.cornerRadiusScale;
   if (!cornerRadiusScale) return 0;
 
@@ -374,7 +368,7 @@ setDevice(currentDeviceId);
 
 registerDrawFunction(drawScreenContent);
 registerDrawFunction(() => {
-  if (!deviceFrame.complete || !isFrameVisible()) return;
+  if (!deviceFrame.complete) return;
 
   const { offsetX, offsetY, drawWidth, drawHeight } = getDeviceFrameBounds();
   ctx.drawImage(deviceFrame, offsetX, offsetY, drawWidth, drawHeight);
@@ -385,7 +379,6 @@ deviceFrame.onload = redraw;
 document.getElementById("has-shadow").addEventListener("change", redraw);
 document.getElementById("shadow-size").addEventListener("input", redraw);
 document.getElementById("shadow-color").addEventListener("input", redraw);
-document.getElementById("has-frame").addEventListener("change", redraw);
 document.getElementById("select-device").addEventListener("change", function () {
   setDevice(this.value);
   redraw();
