@@ -39,6 +39,18 @@ $(document).ready(function () {
   updateCanvasPreview();
 });
 
+// Reset input values to default when the page is reloaded
+function resetInputs() {
+  // document.getElementById("width").value = document.getElementById("width").defaultValue;
+  // document.getElementById("height").value = document.getElementById("height").defaultValue;
+
+  $("input").each(function () {
+    $(this).val($(this).prop("defaultValue"));
+  });
+}
+
+resetInputs();
+
 // Change text of file-input when a file is selected and show delete button
 const fileInputButton = document.getElementById("button-file-input");
 const fileInput = document.getElementById("file-input");
