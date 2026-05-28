@@ -41,9 +41,6 @@ $(document).ready(function () {
 
 // Reset input values to default when the page is reloaded
 function resetInputs() {
-  // document.getElementById("width").value = document.getElementById("width").defaultValue;
-  // document.getElementById("height").value = document.getElementById("height").defaultValue;
-
   $("input").each(function () {
     $(this).val($(this).prop("defaultValue"));
   });

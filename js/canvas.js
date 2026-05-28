@@ -407,8 +407,30 @@ async function downloadVideo() {
 
     // Add class to button for visual feedback during recording and change button text to indicate recording state
     const downloadButton = document.getElementById("btn-download");
+
     downloadButton.classList.add("recording");
-    downloadButton.textContent = "Recording...";
+
+    // Add video duration countdown to button text during recording
+    downloadButton.textContent = videoDuration > 0 ? formattedDuration : "↓ Download";
+    const countdownInterval = setInterval(() => {
+      videoDuration--;
+
+      function formatVideoDuration(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+      }
+
+      formattedDuration = formatVideoDuration(videoDuration);
+
+      downloadButton.textContent = videoDuration > 0 ? formattedDuration : "↓ Download";
+
+      if (videoDuration <= 0) {
+        clearInterval(countdownInterval);
+      }
+    }, 1000);
+
+
 
     let mimeType = "video/webm";
     if (MediaRecorder.isTypeSupported("video/mp4;codecs=h264")) {
@@ -440,6 +462,8 @@ async function downloadVideo() {
       link.click();
       URL.revokeObjectURL(url);
       setRecordingVisible(false);
+
+      // Reset button state after recording is complete
       downloadButton.classList.remove("recording");
       downloadButton.textContent = "↓ Download";
     };
