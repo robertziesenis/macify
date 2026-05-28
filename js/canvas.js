@@ -1,9 +1,9 @@
 const canvas = document.getElementById("image-frame");
 const ctx = canvas.getContext("2d");
 
-let canvasWidth = 1080;
-let canvasHeight = 1350;
-let bgColor = "#000000";
+let canvasWidth = $("#width").val();
+let canvasHeight = $("#height").val();
+let bgColor = $("#bg-color").val();
 const PLACEHOLDER_SCREEN_COLOR = "#0000ff";
 // Per-device frame assets, canvas layout, and screen placement.
 // layout padding/shift values are fractions of canvas width (horizontal) or height (vertical).
