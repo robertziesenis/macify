@@ -312,3 +312,26 @@ section.image {
     color: var(--text-color);
   }
 }
+
+/* Media Queries */
+@media (max-width: 768px) {
+  html, body, main {
+    width: 100%;
+    height: auto;
+  }
+
+  main {
+    flex-direction: column;
+  }
+
+  section.nav {
+    width: 100%;
+    height: auto;
+    order: 2;
+  }
+
+  section.image {
+    width: 100%;
+    order: 1;
+  }
+}
