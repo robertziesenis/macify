@@ -407,11 +407,12 @@ async function downloadVideo() {
 
     // Add class to button for visual feedback during recording and change button text to indicate recording state
     const downloadButton = document.getElementById("btn-download");
+    let videoDuration = uploadedMedia.duration;
+    let formattedDuration = "";
 
     downloadButton.classList.add("recording");
 
     // Add video duration countdown to button text during recording
-    downloadButton.textContent = videoDuration > 0 ? formattedDuration : "↓ Download";
     const countdownInterval = setInterval(() => {
       videoDuration--;
 
