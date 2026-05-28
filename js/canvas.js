@@ -5,8 +5,8 @@ let canvasWidth = $("#width").val();
 let canvasHeight = $("#height").val();
 let bgColor = $("#bg-color").val();
 const PLACEHOLDER_SCREEN_COLOR = "#0000ff";
+
 // Per-device frame assets, canvas layout, and screen placement.
-// layout padding/shift values are fractions of canvas width (horizontal) or height (vertical).
 const DEVICES = {
   macbook: {
     frameSrc: "./img/macbook.png",
@@ -57,7 +57,6 @@ const DEVICES = {
       aspectRatio: 0.461,
       offsetXScale: 0.066,
       offsetYScale: 0.033,
-      // Corner radius as a fraction of the shorter screen edge
       cornerRadiusScale: 0.12,
     },
   },
@@ -102,15 +101,14 @@ let uploadedMediaType = "";
 let uploadedObjectURL = null;
 let videoRequestId = null;
 
-// Registry of draw functions — add future elements here via registerDrawFunction()
+// Registry of draw functions
 const drawFunctions = [];
 
 function registerDrawFunction(fn) {
   drawFunctions.push(fn);
 }
 
-let currentDeviceId =
-  document.getElementById("select-device")?.value || "macbook";
+let currentDeviceId = document.getElementById("select-device")?.value || "macbook";
 
 function getDeviceConfig(deviceId = currentDeviceId) {
   return DEVICES[deviceId] || DEVICES.macbook;
@@ -144,19 +142,15 @@ function getDeviceFrameBounds() {
   const availY = canvas.height * paddingTop;
 
   let drawWidth = availWidth;
-  let drawHeight =
-    (deviceFrame.naturalHeight / deviceFrame.naturalWidth) * drawWidth;
+  let drawHeight = (deviceFrame.naturalHeight / deviceFrame.naturalWidth) * drawWidth;
 
   if (drawHeight > availHeight) {
     drawHeight = availHeight;
-    drawWidth =
-      (deviceFrame.naturalWidth / deviceFrame.naturalHeight) * drawHeight;
+    drawWidth = (deviceFrame.naturalWidth / deviceFrame.naturalHeight) * drawHeight;
   }
 
-  const offsetX =
-    availX + (availWidth - drawWidth) / 2 + canvas.width * shiftX;
-  const offsetY =
-    availY + (availHeight - drawHeight) / 2 + canvas.height * shiftY;
+  const offsetX = availX + (availWidth - drawWidth) / 2 + canvas.width * shiftX;
+  const offsetY = availY + (availHeight - drawHeight) / 2 + canvas.height * shiftY;
 
   return { offsetX, offsetY, drawWidth, drawHeight };
 }
@@ -189,10 +183,7 @@ function getScreenCornerRadius(screenWidth, screenHeight) {
   if (!cornerRadiusScale) return 0;
 
   const maxRadius = Math.min(screenWidth, screenHeight) / 2;
-  return Math.min(
-    Math.min(screenWidth, screenHeight) * cornerRadiusScale,
-    maxRadius,
-  );
+  return Math.min(screenWidth * cornerRadiusScale, screenHeight * cornerRadiusScale, maxRadius);
 }
 
 function addRoundRectPath(ctx, x, y, width, height, radius) {
@@ -214,14 +205,19 @@ function addRoundRectPath(ctx, x, y, width, height, radius) {
   ctx.closePath();
 }
 
-function clipToScreenBounds() {
-  const { mediaX, mediaY, screenWidth, screenHeight } = getScreenBounds();
-  const radius = getScreenCornerRadius(screenWidth, screenHeight);
-  if (radius <= 0) return;
-
-  ctx.beginPath();
-  addRoundRectPath(ctx, mediaX, mediaY, screenWidth, screenHeight, radius);
-  ctx.clip();
+function applyScreenShadow() {
+  const shadow = getShadowSettings();
+  if (shadow.enabled && shadow.size > 0) {
+    ctx.shadowColor = document.getElementById("shadow-color")?.value || "rgba(0, 0, 0, 0.5)";
+    ctx.shadowBlur = shadow.size;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = shadow.size * 0.4;
+  } else {
+    ctx.shadowColor = "transparent";
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+  }
 }
 
 function drawImageCoverInScreen(image, mediaWidth, mediaHeight) {
@@ -233,10 +229,21 @@ function drawImageCoverInScreen(image, mediaWidth, mediaHeight) {
   const sh = screenHeight / scale;
   const sx = Math.max(0, (mediaWidth - sw) / 2);
   const sy = Math.max(0, (mediaHeight - sh) / 2);
+  const radius = getScreenCornerRadius(screenWidth, screenHeight);
 
+  // Draw shadow (without clipping)
   ctx.save();
-  clipToScreenBounds();
   applyScreenShadow();
+  ctx.beginPath();
+  addRoundRectPath(ctx, mediaX, mediaY, screenWidth, screenHeight, radius);
+  ctx.fill();
+  ctx.restore();
+
+  // Draw the clipped image
+  ctx.save();
+  ctx.beginPath();
+  addRoundRectPath(ctx, mediaX, mediaY, screenWidth, screenHeight, radius);
+  ctx.clip();
 
   ctx.drawImage(
     image,
@@ -252,28 +259,25 @@ function drawImageCoverInScreen(image, mediaWidth, mediaHeight) {
   ctx.restore();
 }
 
-function applyScreenShadow() {
-  const shadow = getShadowSettings();
-  if (shadow.enabled && shadow.size > 0) {
-    ctx.shadowColor =
-      document.getElementById("shadow-color")?.value || "rgba(0, 0, 0, 1)";
-    ctx.shadowBlur = shadow.size;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = shadow.size * 0.4;
-  } else {
-    ctx.shadowColor = "transparent";
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-  }
-}
-
 function drawPlaceholderScreen() {
   const { mediaX, mediaY, screenWidth, screenHeight } = getScreenBounds();
+  const radius = getScreenCornerRadius(screenWidth, screenHeight);
 
+  // Draw shadow (without clipping)
   ctx.save();
-  clipToScreenBounds();
   applyScreenShadow();
+  ctx.beginPath();
+  addRoundRectPath(ctx, mediaX, mediaY, screenWidth, screenHeight, radius);
+  ctx.fillStyle = PLACEHOLDER_SCREEN_COLOR;
+  ctx.fill();
+  ctx.restore();
+
+  // Draw the clipped placeholder
+  ctx.save();
+  ctx.beginPath();
+  addRoundRectPath(ctx, mediaX, mediaY, screenWidth, screenHeight, radius);
+  ctx.clip();
+
   ctx.fillStyle = PLACEHOLDER_SCREEN_COLOR;
   ctx.fillRect(mediaX, mediaY, screenWidth, screenHeight);
   ctx.restore();
@@ -360,8 +364,6 @@ document.getElementById("bg-color").addEventListener("input", function () {
   redraw();
 });
 
-// Uploaded media handling
-
 // Device frame image
 const deviceFrame = new Image();
 setDevice(currentDeviceId);
@@ -405,14 +407,12 @@ async function downloadVideo() {
     if (!uploadedMedia || uploadedMediaType !== "video") return;
     setRecordingVisible(true);
 
-    // Add class to button for visual feedback during recording and change button text to indicate recording state
     const downloadButton = document.getElementById("btn-download");
     let videoDuration = uploadedMedia.duration;
     let formattedDuration = "";
 
     downloadButton.classList.add("recording");
 
-    // Add video duration countdown to button text during recording
     const countdownInterval = setInterval(() => {
       videoDuration--;
 
@@ -431,8 +431,6 @@ async function downloadVideo() {
       }
     }, 1000);
 
-
-
     let mimeType = "video/webm";
     if (MediaRecorder.isTypeSupported("video/mp4;codecs=h264")) {
       mimeType = "video/mp4;codecs=h264";
@@ -442,7 +440,7 @@ async function downloadVideo() {
       mimeType = "video/webm;codecs=vp9";
     }
 
-    const stream = canvas.captureStream(60); // 60 fps
+    const stream = canvas.captureStream(60);
     const recorder = new MediaRecorder(stream, { mimeType: mimeType });
     const chunks = [];
 
@@ -456,26 +454,21 @@ async function downloadVideo() {
       const blob = new Blob(chunks, { type: mimeType });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.download = mimeType.includes("mp4")
-        ? "macified.mp4"
-        : "macified.webm";
+      link.download = mimeType.includes("mp4") ? "macified.mp4" : "macified.webm";
       link.href = url;
       link.click();
       URL.revokeObjectURL(url);
       setRecordingVisible(false);
 
-      // Reset button state after recording is complete
       downloadButton.classList.remove("recording");
       downloadButton.textContent = "↓ Download";
     };
 
-    // Reset video to start
     uploadedMedia.currentTime = 0;
     uploadedMedia.play().catch(() => {});
 
     recorder.start();
 
-    // Stop recording after video duration
     setTimeout(() => {
       if (recorder.state !== "inactive") {
         recorder.stop();
