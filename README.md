@@ -2,9 +2,6 @@
 ## About
 Macify is a web tool for creating image and video mockups of your screen recordings within Macbook frames. Also featuring: iMac, iPhone and Lenovo ThinkPad devices.
 
-## How to Use
-Instructions tba
-
 ## Roadmap (work in progress)
 Completed
 - [x] Upload a screen recording image or video file
@@ -19,6 +16,7 @@ Completed
 
 To Do
 - [ ] Test and fix image download functionality in mobile browsers (Video handling seems to work)
+- [ ] Switch between "Crop" and "Fit" screen content placement
 
 ## Info
 Robert Ziesenis
